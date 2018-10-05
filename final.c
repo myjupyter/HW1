@@ -85,7 +85,7 @@ int readFromStdInput(char*** stringArray) {
 			capacity *= 2;
 			reallocArray(&(*stringArray), capacity);
 		}
-		(*stringArray)[sizeOfStringArray++] = strdup(buffe);
+		(*stringArray)[sizeOfStringArray++] = strdup(buffer);
 		if((*stringArray)[sizeOfStringArray - 1] == NULL)
 			genMemoryError((*stringArray), sizeOfStringArray - 1);
 		if(fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
