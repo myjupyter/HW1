@@ -47,11 +47,13 @@ int processString(char** stringArray, char*** newStringArray, int sizeOfStringAr
 				counter--;
 		}
 		if( *iterator  == '\0' && counter == 0) {
-			(*newStringArray)[sizeOfNewStringArray++] = strdup(stringArray[i]);
+			(*newStringArray)[sizeOfNewStringArray++] = (char*)calloc(strlen(stringArray[i]) + 1, sizeof(char));
 			if((*newStringArray)[sizeOfNewStringArray - 1] == NULL) {
 				freeArray(stringArray, sizeOfStringArray);
 				genMemoryError(*newStringArray, sizeOfNewStringArray - 1);
 			}
+			strcpy((*newStringArray)[sizeOfNewStringArray - 1], stringArray[i]);
+
 		}		
     }
     return sizeOfNewStringArray;
@@ -85,9 +87,10 @@ int readFromStdInput(char*** stringArray) {
 			capacity *= 2;
 			reallocArray(&(*stringArray), capacity);
 		}
-		(*stringArray)[sizeOfStringArray++] = strdup(buffer);
+		(*stringArray)[sizeOfStringArray++] = (char*)calloc(strlen(buffer) + 1, sizeof(char));
 		if((*stringArray)[sizeOfStringArray - 1] == NULL)
 			genMemoryError((*stringArray), sizeOfStringArray - 1);
+		strcpy((*stringArray)[sizeOfStringArray - 1], buffer);
 		if(fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
 			break;
 		}
