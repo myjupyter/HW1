@@ -11,11 +11,11 @@
 // Функция для освобождения памяти для двумерного массива
 // Принимает указатель на массив указателей и размер массива
 void freeArray(char** stringArray, int sizeOfStringArray) {
-    if(stringArray != NULL) {
-		for(int i = 0; i < sizeOfStringArray; i++) 
-			free(stringArray[i]);
-		free(stringArray);
-    }
+if(stringArray != NULL) {
+	for(int i = 0; i < sizeOfStringArray; i++) 
+		free(stringArray[i]);
+	free(stringArray);
+	}
 }
 
 // В случае недостатка памяти генерируется "исключение".
