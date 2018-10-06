@@ -29,6 +29,7 @@ void freeArray(char **stringArray, int sizeOfStringArray) {
 // "[error]" в стандартный поток вывода, программа завершается успешно Если
 // память не была выделена вообще, но исключение сработало, помещаем в char* str
 // NULL, в size - 0
+// Возвращает 0
 int genMemoryError(char **str, int size) {
   freeArray(str, size);
   printf("[error]");
@@ -36,7 +37,7 @@ int genMemoryError(char **str, int size) {
 }
 
 // Функция обработки строк.
-// Принимает указатель на обрабатываемый массив строк, пустой указатель на новый
+// Принимает константный указатель на обрабатываемый массив строк, пустой указатель на новый
 // массив указателей, куда поместится результат обработки, размер
 // обрабатываемого массива. Возвращает размер уже заполненного нового массива.
 int processString(const char **stringArray, char ***newStringArray,
@@ -68,9 +69,8 @@ int processString(const char **stringArray, char ***newStringArray,
 }
 
 // Функция перевыделения памяти в случае, если capacity и size совпадают
-// Принимает указатель на массив указателей и новый размер массива
+// Принимает указатель на массив указателей и старый capacity массива
 void reallocArray(char ***ptr, int* oldSize) {
-  
   char **handler = (char **)realloc((*ptr), (*oldSize + (*oldSize)/2) * sizeof(char *));
   if (!handler) {
     genMemoryError((*ptr), *oldSize);
