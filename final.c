@@ -40,7 +40,7 @@ int genMemoryError(char **str, int size) {
 // Принимает константный указатель на обрабатываемый массив строк, пустой указатель на новый
 // массив указателей, куда поместится результат обработки, размер
 // обрабатываемого массива. Возвращает размер уже заполненного нового массива.
-int processString(const char **stringArray, char ***newStringArray,
+int processString(char * const *stringArray, char ***newStringArray,
                   int sizeOfStringArray) {
   int counter = 0, sizeOfNewStringArray = 0;
   char const *iterator = NULL;
@@ -127,7 +127,7 @@ int main(void) {
   int sizeOfStringArray = readFromStdInput(&stringArray);
   if(sizeOfStringArray == -1)
     return 0;
-  int sizeOfNewStringArray = processString((const char **)stringArray,
+  int sizeOfNewStringArray = processString(stringArray,
                                            &newStringArray, sizeOfStringArray);
   if(sizeOfNewStringArray == -1)
     return 0;
