@@ -33,7 +33,7 @@ void freeArray(char **stringArray, int sizeOfStringArray) {
 int genMemoryError(char **str, int size) {
   freeArray(str, size);
   printf("[error]");
-  return 0;
+  return -1;
 }
 
 // Функция обработки строк.
@@ -47,7 +47,7 @@ int processString(const char **stringArray, char ***newStringArray,
   (*newStringArray) = (char **)calloc(sizeOfStringArray, sizeof(char *));
   if ((*newStringArray) == NULL) {
     freeArray((char **)stringArray, sizeOfStringArray);
-    genMemoryError(NULL, 0);
+    return genMemoryError(NULL, 0);
   }
   for (int i = 0; i < sizeOfStringArray; i++, counter = 0) {
     iterator = stringArray[i];
@@ -61,7 +61,7 @@ int processString(const char **stringArray, char ***newStringArray,
       (*newStringArray)[sizeOfNewStringArray++] = strdup(stringArray[i]);
       if ((*newStringArray)[sizeOfNewStringArray - 1] == NULL) {
         freeArray((char **)stringArray, sizeOfStringArray);
-        genMemoryError(*newStringArray, sizeOfNewStringArray - 1);
+        return genMemoryError(*newStringArray, sizeOfNewStringArray - 1);
       }
     }
   }
@@ -70,13 +70,14 @@ int processString(const char **stringArray, char ***newStringArray,
 
 // Функция перевыделения памяти в случае, если capacity и size совпадают
 // Принимает указатель на массив указателей и старый capacity массива
-void reallocArray(char ***ptr, int* oldSize) {
+int reallocArray(char ***ptr, int* oldSize) {
   char **handler = (char **)realloc((*ptr), (*oldSize + (*oldSize)/2) * sizeof(char *));
   if (!handler) {
-    genMemoryError((*ptr), *oldSize);
+    return genMemoryError((*ptr), *oldSize);
   }
   *oldSize = *oldSize + (*oldSize)/2;
   (*ptr) = handler;
+  return 0;
 }
 
 // Функция для чтения строк и страндартного ввода.
@@ -88,17 +89,19 @@ int readFromStdInput(char ***stringArray) {
   int sizeOfStringArray = 0;
   if (scanf(" %m[^\n]", &buffer) == -1) {
     printf("[error]");
-    return 0;
+    return -1;
   }
   (*stringArray) = (char **)calloc(capacity, sizeof(char *));
   if ((*stringArray) == NULL)
-    genMemoryError(NULL, 0);
+    return genMemoryError(NULL, 0);
   while (1) {
     if (sizeOfStringArray == capacity) 
-      reallocArray(&(*stringArray), &capacity);
+      if(reallocArray(&(*stringArray), &capacity) == -1) {
+        return -1;
+      }
     (*stringArray)[sizeOfStringArray++] = strdup(buffer);
     if ((*stringArray)[sizeOfStringArray - 1] == NULL)
-      genMemoryError((*stringArray), sizeOfStringArray - 1);
+      return genMemoryError((*stringArray), sizeOfStringArray - 1);
     free(buffer);
     buffer = NULL;
     if (scanf(" %m[^\n]", &buffer) == -1) {
@@ -122,8 +125,12 @@ int main(void) {
   char **stringArray = NULL;
   char **newStringArray = NULL;
   int sizeOfStringArray = readFromStdInput(&stringArray);
+  if(sizeOfStringArray == -1)
+    return 0;
   int sizeOfNewStringArray = processString((const char **)stringArray,
                                            &newStringArray, sizeOfStringArray);
+  if(sizeOfNewStringArray == -1)
+    return 0;
   printStringArray(newStringArray, sizeOfNewStringArray);
   freeArray(stringArray, sizeOfStringArray);
   freeArray(newStringArray, sizeOfNewStringArray);
